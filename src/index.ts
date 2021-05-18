@@ -54,7 +54,8 @@ const validateInput = (
     throw new InvalidInput(
       "The number of students can't be less than the number of topics."
     );
-  
+    if(students.length < teamCount)
+  throw new InvalidInput("The number of students can't be less than the number of the groups.")
 };
 const Oddcases = (params: Param): Array<Team> => {
   const {

@@ -34,5 +34,17 @@ describe("organizeTeams", () => {
       expect(func).toThrow("The number of students can't be less than the number of topics.")
     }
   });
+  it("Should throw an error if the number of students is less than the number of the groups", () => { 
+    const func = organizeTeams;
+   
+    try
+    {
+func(students,topics, 15);
+    } 
+    catch
+    {
+      expect(func).toThrow("The number of students can't be less than the number of the groups.")
+    }
+  });
 
 });
