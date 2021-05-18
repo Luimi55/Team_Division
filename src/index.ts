@@ -49,6 +49,12 @@ const validateInput = (
 
     uniqueTopics.add(topic);
   }
+ 
+ if (students.length < topics.length)
+    throw new InvalidInput(
+      "The number of students can't be less than the number of topics."
+    );
+  
 };
 const Oddcases = (params: Param): Array<Team> => {
   const {

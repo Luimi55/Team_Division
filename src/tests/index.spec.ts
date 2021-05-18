@@ -24,4 +24,15 @@ describe("organizeTeams", () => {
       expect(func).toThrow("We can't have repeated topics.");
     }
   });
+
+  it("Should throw an error if the number of students is less than the number of topics", () => {
+    const func = organizeTeams;
+
+    try {
+      func(students,topics, 2);
+    } catch {
+      expect(func).toThrow("The number of students can't be less than the number of topics.")
+    }
+  });
+
 });
