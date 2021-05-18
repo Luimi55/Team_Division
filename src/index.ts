@@ -38,12 +38,11 @@ interface Team {
 
 // for(let j = 0; j < arrayTeam[i].students.length; j++){
 //   console.log(arrayTeam[i].students[j] + " " + i + " " +arrayTeam[i].topic);
-  
+
 // specificArray.push(arrayTeam[i].students[j] + " " + i + " " +arrayTeam[i].topic)
 // }
 // }
 // temp = specificArray[0];
-
 
 // return true
 // }
@@ -55,18 +54,14 @@ const shuffle = (val: Array<any>): Array<any> => {
   return shuffledArr;
 };
 
-const validateTypes = (students:any, topics:any, teamCount: any) =>{
-if(typeof students !== "string" ||typeof topics !== "string"){
-  throw new InvalidInput(
-    "The students and topics must be strings."
-  );
-}
-if(typeof teamCount !== "number" ){
-  throw new InvalidInput(
-    "The number of teams must be a numeric value."
-  );
-}
-}
+const validateTypes = (students: any, topics: any, teamCount: any) => {
+  if (typeof students !== "string" || typeof topics !== "string") {
+    throw new InvalidInput("The students and topics must be strings.");
+  }
+  if (typeof teamCount !== "number") {
+    throw new InvalidInput("The number of teams must be a numeric value.");
+  }
+};
 
 const validateInput = (
   students: Array<string>,
@@ -95,15 +90,16 @@ const validateInput = (
 
     uniqueTopics.add(topic);
   }
- 
- if (students.length < topics.length)
+
+  if (students.length < topics.length)
     throw new InvalidInput(
       "The number of students can't be less than the number of topics."
     );
-    if(students.length < teamCount)
-  throw new InvalidInput("The number of students can't be less than the number of the groups.")
-
-    }
+  if (students.length < teamCount)
+    throw new InvalidInput(
+      "The number of students can't be less than the number of the groups."
+    );
+};
 
 const Oddcases = (params: Param): Array<Team> => {
   const {
@@ -169,68 +165,63 @@ const caseExact = (params: Param): Array<Team> => {
   return teams;
 };
 
-export const organizeTeams = (
+export const organizeTeams = async (
   students: string,
   topics: string,
   teamCount: number
-): Array<Team> => {
-  validateTypes(students, topics,teamCount)
-  let teams: Array<Team> = [];
-  
-  fs.readFile(students, "utf8", (err, studentsFile) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
+): Promise<Array<Team>> => {
+  try {
+    validateTypes(students, topics, teamCount);
+    let teams: Array<Team> = [];
+
+    const studentsFile: string = await fs.promises.readFile(students, "utf-8");
 
     const studentsList: Array<string> = studentsFile.split(/\r?\n/);
 
-    fs.readFile(topics, "utf8", (err, topicsFile) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
+    const topicsFile: string = await fs.promises.readFile(topics, "utf-8");
 
-      const topicsList: Array<string> = topicsFile.split(/\r?\n/);
+    const topicsList: Array<string> = topicsFile.split(/\r?\n/);
 
-      validateInput(studentsList, topicsList, teamCount);
+    validateInput(studentsList, topicsList, teamCount);
 
-      const shuffledStudent: Array<string> = shuffle(studentsList);
+    const shuffledStudent: Array<string> = shuffle(studentsList);
 
-      const shuffledTopics: Array<string> = shuffle(topicsList);
+    const shuffledTopics: Array<string> = shuffle(topicsList);
 
-      let distribution = studentsList.length / teamCount;
+    const distribution = studentsList.length / teamCount;
 
-      let remainder = studentsList.length % teamCount;
-      
-      if (remainder === 0)
-        teams = caseExact({
-          distribution,
-          shuffledStudent,
-          shuffledTopics,
-          teamCount,
-        });
-      else
-        teams = Oddcases({
-          distribution,
-          shuffledStudent,
-          shuffledTopics,
-          teamCount,
-          remainder,
-        });
-        
-    });
-    return teams
-  });
- 
+    const remainder = studentsList.length % teamCount;
+
+    if (remainder === 0)
+      teams = caseExact({
+        distribution,
+        shuffledStudent,
+        shuffledTopics,
+        teamCount,
+      });
+    else
+      teams = Oddcases({
+        distribution,
+        shuffledStudent,
+        shuffledTopics,
+        teamCount,
+        remainder,
+      });
+
+    return teams;
+  } catch (error) {
+    console.log(error);
+
+    return error;
+  }
 };
 
-(() => {
+(async () => {
   const students: string = "src/files/students.txt";
   const topics: string = "src/files/topics.txt";
 
-  const teams = organizeTeams(students, topics, 2);
+  const teams = await organizeTeams(students, topics, 2);
   console.log(teams);
-  
+
   //random()
 })();
