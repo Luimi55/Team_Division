@@ -1,4 +1,4 @@
-import { organizeTeams } from "../index";
+import { organizeTeams, validateTypes, Team } from '../index';
 
 import fs from "fs";
 
@@ -71,5 +71,51 @@ describe("organizeTeams", () => {
     } catch {
       expect(func).toThrow("The number of teams must be a numeric value.");
     }
+  });
+
+  const random = async(): Promise <boolean>=> {
+    const students: string = "src/files/students.txt";
+    const topics: string = "src/files/topics.txt";
+    const teamCount: number = 5;
+  
+    validateTypes(students, topics,teamCount)
+    const studentsFile: string  = await fs.promises.readFile(students, "utf8")
+  
+  const studentsList: Array<string> = studentsFile.split(/\r?\n/);
+  
+    const probabity = (1/teamCount)
+    const specificArray: Array<string> = []
+    let loop: number = 100
+    let temp: string = ""
+  
+  for(let k = 0; k< loop; k++){
+  const arrayTeam: Array<Team> = await organizeTeams(students,topics,teamCount)
+  
+  
+  for(let i = 0; i < arrayTeam.length; i++){
+  for(let j = 0; j < arrayTeam[i].students.length; j++){
+    
+    if(arrayTeam[i].students[j] == studentsList[0]){
+      specificArray.push(arrayTeam[i].students[j] + " " + i + " " +arrayTeam[i].topic)
+    }
+    }
+  }
+  }
+  temp = specificArray[0];
+  let count: number = 0
+  for(let i = 0; i< specificArray.length; i++){
+    if(temp == specificArray[i]){
+      count+=1
+    }
+  }
+  const repeatedCount: number = count/loop;
+  const isRandom: boolean = repeatedCount <= probabity 
+  
+  return isRandom
+  }
+
+  it("Validate random", async () => {
+    expect(await random()).toBe(true)
+    
   });
 });
