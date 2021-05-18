@@ -1,6 +1,13 @@
 import fs from "fs";
 import { InvalidInput } from "./errors/invalid-input";
 
+const shuffle = (val:Array<any>): Array<string> => {
+  const shuffle:Array<string> = val.map((a) => ({sort: Math.random, value: a}))
+  .sort((a: any ,b: any) => a.sort - b.sort)
+  .map((a) => a.value)
+return shuffle
+}
+
 const validateInput = (
   students: Array<string>,
   topics: Array<string>,
@@ -41,4 +48,20 @@ export const organizeTeams = (
   const topicsList: Array<string> = topicsFile.split(/\r?\n/);
 
   validateInput(studentsList, topicsList, teamCount);
+
+  const shuffleStudent: Array<string> = shuffle(studentsList)
+
+  const shuffleTopics: Array<string> = shuffle(topicsList)
+
+  let distribution = studentsList.length / teamCount
+
+  let remainder = studentsList.length % teamCount
 };
+
+(() => {
+  organizeTeams(
+    "/Users/luismiguelrosareyes/Documents/Team_Division/src/files/students.txt",
+    "/Users/luismiguelrosareyes/Documents/Team_Division/src/files/topics.txt",
+    2
+  )
+})();
