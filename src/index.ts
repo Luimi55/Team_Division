@@ -1,11 +1,23 @@
 import fs from "fs";
 import { InvalidInput } from "./errors/invalid-input";
 
+interface Param {
+  distribution: number;
+  shuffledStudent: Array<string>;
+  shuffledTopics: Array<string>;
+  teamCount: number;
+}
+
+interface Team {
+  students: Array<string>;
+  topic: string;
+}
+
 const shuffle = (val:Array<any>): Array<string> => {
-  const shuffle:Array<string> = val.map((a) => ({sort: Math.random, value: a}))
+  const shuffledArr:Array<string> = val.map((a) => ({sort: Math.random(), value: a}))   
   .sort((a: any ,b: any) => a.sort - b.sort)
   .map((a) => a.value)
-return shuffle
+return shuffledArr
 }
 
 const validateInput = (
@@ -28,6 +40,32 @@ const validateInput = (
   }
 };
 
+const caseExact = (params: Param): Array<Team> => {
+const {distribution, shuffledStudent, shuffledTopics, teamCount} = params;
+
+const teams: Array<Team> = [];
+const studentsF: Array<any> = [];
+let count: number = 0;
+let distributionTemp: number = distribution;
+
+for (let i = 0; i < teamCount; i++){
+studentsF.push(shuffledStudent.slice(count, distributionTemp));
+
+count += distribution;
+distributionTemp += distribution;
+}
+
+for (let i = 0; i < teamCount; i++){
+  teams.push({
+    students: [...studentsF[i]],
+    topic: shuffledTopics[i],
+  });
+}
+
+return teams;
+
+}
+
 export const organizeTeams = (
   students: string,
   topics: string,
@@ -49,19 +87,31 @@ export const organizeTeams = (
 
   validateInput(studentsList, topicsList, teamCount);
 
-  const shuffleStudent: Array<string> = shuffle(studentsList)
+  const shuffledStudent: Array<string> = shuffle(studentsList)
 
-  const shuffleTopics: Array<string> = shuffle(topicsList)
+  const shuffledTopics: Array<string> = shuffle(topicsList)
 
   let distribution = studentsList.length / teamCount
 
   let remainder = studentsList.length % teamCount
+
+  if (remainder === 0){
+    const teams = caseExact({
+      distribution, 
+      shuffledStudent,
+      shuffledTopics,
+      teamCount,
+    }
+    )
+    console.log(teams);
+  }    
+
 };
 
 (() => {
   organizeTeams(
-    "/Users/luismiguelrosareyes/Documents/Team_Division/src/files/students.txt",
-    "/Users/luismiguelrosareyes/Documents/Team_Division/src/files/topics.txt",
+    "C:/Users/ferna/projects/divide/Team_Division/src/files/students.txt",
+    "C:/Users/ferna/projects/divide/Team_Division/src/files/topics.txt",
     2
   )
 })();
