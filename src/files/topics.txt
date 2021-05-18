@@ -1,6 +1,3 @@
 Programacion I
 Programacion II
 Programacion III
-Programacion IV 
-Programacion V
-Programacion VI

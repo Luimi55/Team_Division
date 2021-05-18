@@ -47,4 +47,23 @@ func(students,topics, 15);
     }
   });
 
+  it("The first two arguments must be strings", () => {
+    const func:any = organizeTeams;
+
+    try {
+      func(3,2, 2);
+    } catch {
+      expect(func).toThrow("The students and topics must be strings.")
+    }
+  });
+
+  it("The last argument must be number", () => {
+    const func:any = organizeTeams;
+
+    try {
+      func(students,topics, "2");
+    } catch {
+      expect(func).toThrow("The number of teams must be a numeric value.")
+    }
+  });
 });

@@ -13,7 +13,40 @@ interface Team {
   students: Array<string>;
   topic: string;
 }
+// const random = (): boolean => {
+//   const students: string = "src/files/students.txt";
+//   const topics: string = "src/files/topics.txt";
+//   const teamCount: number = 2;
 
+//   validateTypes(students, topics,teamCount)
+//   fs.readFile(students, "utf8", (err, studentsFile) => {
+//     if (err) {
+//       console.error(err);
+//       return;
+//     }
+
+//     const studentsList: Array<string> = studentsFile.split(/\r?\n/);
+//   });
+
+//   const probabity = (1/teamCount)
+//   const specificArray: Array<string> = []
+//   let loop: number = 100
+//   let temp: string = ""
+
+// for(let i = 0; i< loop; i++){
+// const arrayTeam: Array<Team> = organizeTeams(students,topics,teamCount)
+
+// for(let j = 0; j < arrayTeam[i].students.length; j++){
+//   console.log(arrayTeam[i].students[j] + " " + i + " " +arrayTeam[i].topic);
+  
+// specificArray.push(arrayTeam[i].students[j] + " " + i + " " +arrayTeam[i].topic)
+// }
+// }
+// temp = specificArray[0];
+
+
+// return true
+// }
 const shuffle = (val: Array<any>): Array<any> => {
   const shuffledArr: Array<string> = val
     .map((a) => ({ sort: Math.random(), value: a }))
@@ -21,6 +54,19 @@ const shuffle = (val: Array<any>): Array<any> => {
     .map((a) => a.value);
   return shuffledArr;
 };
+
+const validateTypes = (students:any, topics:any, teamCount: any) =>{
+if(typeof students !== "string" ||typeof topics !== "string"){
+  throw new InvalidInput(
+    "The students and topics must be strings."
+  );
+}
+if(typeof teamCount !== "number" ){
+  throw new InvalidInput(
+    "The number of teams must be a numeric value."
+  );
+}
+}
 
 const validateInput = (
   students: Array<string>,
@@ -56,7 +102,9 @@ const validateInput = (
     );
     if(students.length < teamCount)
   throw new InvalidInput("The number of students can't be less than the number of the groups.")
-};
+
+    }
+
 const Oddcases = (params: Param): Array<Team> => {
   const {
     distribution,
@@ -125,7 +173,10 @@ export const organizeTeams = (
   students: string,
   topics: string,
   teamCount: number
-): void => {
+): Array<Team> => {
+  validateTypes(students, topics,teamCount)
+  let teams: Array<Team> = [];
+  
   fs.readFile(students, "utf8", (err, studentsFile) => {
     if (err) {
       console.error(err);
@@ -151,7 +202,7 @@ export const organizeTeams = (
       let distribution = studentsList.length / teamCount;
 
       let remainder = studentsList.length % teamCount;
-      let teams = undefined;
+      
       if (remainder === 0)
         teams = caseExact({
           distribution,
@@ -167,15 +218,19 @@ export const organizeTeams = (
           teamCount,
           remainder,
         });
-
-      console.log(teams);
+        
     });
+    return teams
   });
+ 
 };
 
 (() => {
   const students: string = "src/files/students.txt";
   const topics: string = "src/files/topics.txt";
 
-  organizeTeams(students, topics, 2);
+  const teams = organizeTeams(students, topics, 2);
+  console.log(teams);
+  
+  //random()
 })();
