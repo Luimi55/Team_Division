@@ -6,6 +6,7 @@ interface Param {
   shuffledStudent: Array<string>;
   shuffledTopics: Array<string>;
   teamCount: number;
+  remainder? : number;
 }
 
 interface Team {
@@ -13,7 +14,7 @@ interface Team {
   topic: string;
 }
 
-const shuffle = (val:Array<any>): Array<string> => {
+const shuffle = (val:Array<any>): Array<any> => {
   const shuffledArr:Array<string> = val.map((a) => ({sort: Math.random(), value: a}))   
   .sort((a: any ,b: any) => a.sort - b.sort)
   .map((a) => a.value)
@@ -39,6 +40,34 @@ const validateInput = (
     uniqueStudents.add(student);
   }
 };
+const Oddcases =(params: Param): Array<Team> => 
+{
+const{ distribution, shuffledStudent, shuffledTopics , teamCount, remainder} = params;
+
+const teams: Array<Team> = [];
+const exactCases = shuffledStudent.length - remainder!;
+const evenDistribution: number = exactCases / teamCount;
+let DistributionE = evenDistribution;
+let studentsF: Array<any> = [];
+let count: number = 0;
+let StudentsT: Array< string> = [];
+
+for( let i = 0; i <teamCount; i++ ){
+  const StudentToIn: Array< string> = shuffledStudent.slice(count,DistributionE)
+  studentsF.push(StudentToIn);
+  StudentsT.push(...StudentToIn);
+  count += DistributionE;
+  DistributionE += evenDistribution;
+}
+for(let i = 0; i < teamCount; i++)
+teams.push({students: [...studentsF[i]], topic : shuffledTopics[i],})
+
+const ShuffledTeams: Array<Team> = shuffle(teams)
+const remainingstudents: Array<string> = shuffledStudent.filter((x) => !StudentsT.includes(x))
+for( let i = 0; i <remainingstudents.length; i++)ShuffledTeams[i].students.push(remainingstudents[i]);
+return ShuffledTeams; 
+};
+
 
 const caseExact = (params: Param): Array<Team> => {
 const {distribution, shuffledStudent, shuffledTopics, teamCount} = params;
@@ -94,24 +123,33 @@ export const organizeTeams = (
   let distribution = studentsList.length / teamCount
 
   let remainder = studentsList.length % teamCount
-
-  if (remainder === 0){
-    const teams = caseExact({
+let teams = undefined
+  if (remainder === 0)
+      teams = caseExact({
       distribution, 
       shuffledStudent,
       shuffledTopics,
       teamCount,
+      })
+    else teams = Oddcases(
+    {
+      distribution, 
+      shuffledStudent,
+      shuffledTopics,
+      teamCount,
+      remainder,
     }
+    
     )
     console.log(teams);
-  }    
 
-};
+  }    
+ 
 
 (() => {
   organizeTeams(
-    "C:/Users/ferna/projects/divide/Team_Division/src/files/students.txt",
-    "C:/Users/ferna/projects/divide/Team_Division/src/files/topics.txt",
+    "C:/Users/Justin/Team_Division/src/files/students.txt",
+    "C:/Users/Justin/Team_Division/src/files/topics.txt",
     2
-  )
+  )    
 })();
